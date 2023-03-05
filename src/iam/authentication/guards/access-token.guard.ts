@@ -43,7 +43,7 @@ export class AccessTokenGuard implements CanActivate {
   // assume that the token will be included in the authorization header whi is a common pattern (alt : secure cookies)
   private extractTokenFromHeader(request: Request): string | undefined {
     // split for ignore bearer prefix
-    const [_, token] = request.headers.authorization?.split(' ') ?? [];
-    return token;
+    const [type, token] = request.headers.authorization?.split(' ') ?? [];
+    return type === 'Bearer' ? token : undefined;
   }
 }

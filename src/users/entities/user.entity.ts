@@ -2,7 +2,14 @@ import {
   Permission,
   PermissionType,
 } from 'src/iam/authorization/permission.type';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinTable,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ApiKey } from '../api-keys/entities/api-key.entity/api-key.entity';
 import { Role } from '../enums/role.enum';
 
 @Entity()
@@ -18,6 +25,10 @@ export class User {
 
   @Column({ enum: Role, default: Role.Regular })
   role: Role;
+
+  @JoinTable()
+  @OneToMany((type) => ApiKey, (apiKey) => apiKey.user)
+  apiKeys: ApiKey[];
 
   // NOTE: Having the "permissions" column in combination with the "role"
   // likely does not make sense. We use both in this course just to showcase
