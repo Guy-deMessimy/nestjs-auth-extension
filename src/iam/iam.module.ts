@@ -22,6 +22,7 @@ import { ApiKey } from 'src/users/api-keys/entities/api-key.entity/api-key.entit
 import { ApiKeyGuard } from './authentication/guards/api-key/api-key.guard';
 import { GoogleAuthenticationService } from './authentication/social/google-authentication.service';
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller';
+import { OtpAuthenticationService } from './authentication/otp-authentication.service';
 
 // IAM : identity and access management
 // an abstract class cannot be registered as a providers since it cannot instantiated
@@ -53,6 +54,7 @@ import { GoogleAuthenticationController } from './authentication/social/google-a
     FrameworkContributorPolicyHandler,
     ApiKeysService,
     GoogleAuthenticationService,
+    OtpAuthenticationService,
   ],
   controllers: [AuthenticationController, GoogleAuthenticationController],
 })

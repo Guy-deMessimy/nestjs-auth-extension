@@ -16,6 +16,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { SignInDto } from './dto/sign-in.dto';
 import { SignUpDto } from './dto/sign-up.dto';
 import { ActiveUserData } from './interfaces/active-user-data.interface';
+import { OtpAuthenticationService } from './otp-authentication.service';
 import {
   InvalidatedRefreshTokenError,
   RefreshTokenIdsStorage,
@@ -30,6 +31,7 @@ export class AuthenticationService {
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+    private readonly otpAuthService: OtpAuthenticationService,
   ) {}
   async signUp(signUpDto: SignUpDto) {
     try {
@@ -60,6 +62,15 @@ export class AuthenticationService {
     );
     if (!isEqual) {
       throw new UnauthorizedException('Password does not match');
+    }
+    if (user.isTfaEnabled) {
+      const isValid = this.otpAuthService.verifyCode(
+        signInDto.tfaCode,
+        user.tfaSecret,
+      );
+      if (!isValid) {
+        throw new UnauthorizedException('Invalid 2FA code');
+      }
     }
     // existed alterantives than sending the access token as a pure text like eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoidXNlcjFAbmVzdGpzLmNvbSIsImlhdCI6MTY3NTc1NDI2OSwiZXhwIjoxNjc1NzU3ODY5LCJhdWQiOiJsb2NhbGhvc3Q6MzAwMCIsImlzcyI6ImxvY2FsaG9zdDozMDAwIn0.6QAXjbn6kI4g-9tUjXn-LT_66sQZAgcp1i_rraaLDD8
     // as HTTP only and secure cookies option
